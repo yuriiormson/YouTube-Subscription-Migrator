@@ -12,7 +12,7 @@ target/
 subscriptions.txt
 subscription_count.txt
 *.apps.googleusercontent.com.json
-conf.properties
+config.properties
 
 ### Eclipse ###
 .apt_generated
