@@ -11,6 +11,7 @@ target/
 *.ipr
 subscriptions.txt
 *.apps.googleusercontent.com.json
+conf.properties
 
 ### Eclipse ###
 .apt_generated
