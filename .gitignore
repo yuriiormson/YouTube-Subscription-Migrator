@@ -10,6 +10,7 @@ target/
 *.iml
 *.ipr
 subscriptions.txt
+subscription_count.txt
 *.apps.googleusercontent.com.json
 conf.properties
 
