@@ -11,6 +11,8 @@ target/
 *.iws
 *.iml
 *.ipr
+subscriptions.txt
+*.apps.googleusercontent.com.json
 
 ### Eclipse ###
 .apt_generated

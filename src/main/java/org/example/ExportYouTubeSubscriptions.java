@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExportYouTubeSubscriptions {
-    private static final String CLIENT_SECRETS = "client_secret_167862215707-csctad2bgacp250nonie3pkraifa3kg9.apps.googleusercontent.com.json";
+    private static final String CLIENT_SECRETS = "example";
     private static final List<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String APPLICATION_NAME = "YouTube Subscription Exporter";
