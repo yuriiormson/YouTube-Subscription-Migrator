@@ -38,22 +38,19 @@ This project allows you to migrate YouTube subscriptions from one account to ano
 - - Place your `client_secrets.json` file in the project root (or match the name specified in `config.properties`).
 
 ### 3. Export Subscriptions
-1. Clear old authentication tokens:
-- Delete files in `~/.credentials` (Windows: `C:\Users\<YourName>\.credentials`, macOS/Linux: `~/.credentials`).
-2. Run `ExportYouTubeSubscriptions.java` in your IDE.
-3. In the browser:
+1. Run `ExportYouTubeSubscriptions.java` in your IDE.
+2. In the browser:
 - Log in with the source account.
 - Grant access ("View your YouTube account").
-4. Check `subscriptions.txt` for exported channel IDs.
+3. Check `subscriptions.txt` for exported channel IDs.
 
 ### 4. Import Subscriptions
-1. Clear authentication tokens in `~/.credentials`.
-2. Run `ImportYouTubeSubscriptions.java` in your IDE.
-3. In the browser:
+1. Run `ImportYouTubeSubscriptions.java` in your IDE.
+2. In the browser:
 - Log in with the target account (use incognito mode or log out of the source account).
 - Grant access ("Manage your YouTube account").
-4. Monitor the console:
-- The program tracks the 60 subscriptions/day limit and stops if exceeded, saving progress in `subscription_count.txt`.
+3. Monitor the console:
+- The program tracks the 95 subscriptions/day limit and stops if exceeded, saving progress in `subscription_count.txt`.
 - Repeat the next day if needed.
 
 ### 5. Verify Results
@@ -69,9 +66,12 @@ This project allows you to migrate YouTube subscriptions from one account to ano
 
 ## Known Issues and Solutions
 - **403 Error**: Ensure scopes are added and both account emails are in "Test users".
-- **Token Conflicts**: Always clear `~/.credentials` before running.
-- **Rate Limits**: The program enforces the 60 subscriptions/day limit.
+- **Token Conflicts**: Always clear authentication tokens if needed.
+- **Rate Limits**: The program enforces the 95 subscriptions/day limit.
 - **Account Confusion**: Use different browsers or incognito mode.
+
+## Where to Check Limits
+- To monitor your API quotas, go to [Google Cloud Console](https://console.cloud.google.com), navigate to "APIs & Services" → "Quotas", and select "YouTube Data API v3". The "Quotas & System Limits" section will show your current usage (e.g., 10,000 queries per day) and percentage used.
 
 ## License
 [MIT License](LICENSE)

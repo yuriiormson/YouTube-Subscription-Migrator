@@ -25,7 +25,7 @@ public class ImportYouTubeSubscriptions {
     private static final List<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube");
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String APPLICATION_NAME = "YouTube Subscription Importer";
-    private static final int DAILY_LIMIT = 60;
+    private static final int DAILY_LIMIT = 95;
     private static final String COUNT_FILE = "subscription_count.txt"; // File to store subscription counter
     private static final String CONFIG_FILE_PATH = "config.properties";
 
