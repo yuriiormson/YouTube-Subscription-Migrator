@@ -66,9 +66,7 @@ This project allows you to migrate YouTube subscriptions from one account to ano
 
 ## Known Issues and Solutions
 - **403 Error**: Ensure scopes are added and both account emails are in "Test users".
-- **Token Conflicts**: Always clear authentication tokens if needed.
 - **Rate Limits**: The program enforces the 95 subscriptions/day limit.
-- **Account Confusion**: Use different browsers or incognito mode.
 
 ## Where to Check Limits
 - To monitor your API quotas, go to [Google Cloud Console](https://console.cloud.google.com), navigate to "APIs & Services" → "Quotas", and select "YouTube Data API v3". The "Quotas & System Limits" section will show your current usage (e.g., 10,000 queries per day) and percentage used.
