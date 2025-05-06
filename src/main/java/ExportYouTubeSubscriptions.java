@@ -12,41 +12,40 @@ import com.google.api.services.youtube.model.Subscription;
 import com.google.api.services.youtube.model.SubscriptionListResponse;
 
 import java.io.*;
-import java.security.GeneralSecurityException;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 public class ExportYouTubeSubscriptions {
-    private static final List<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
+    private static final String CLIENT_SECRETS_FILE = "client_secrets.json";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static final List<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/youtube.readonly");
     private static final String APPLICATION_NAME = "YouTube Subscription Exporter";
-    private static final String CONFIG_FILE_PATH = "config.properties";
+    private static final String SUBSCRIPTIONS_FILE = "subscriptions.txt";
+    private static final String COUNT_FILE = "subscription_count.txt";
 
-    // Load configuration from config.properties
-    private static Properties loadConfigProperties() {
+    public static void main(String[] args) throws Exception {
+        // Load client secrets from config
         Properties properties = new Properties();
-        try (InputStream inputStream = new FileInputStream(CONFIG_FILE_PATH)) {
-            properties.load(inputStream);
-        } catch (FileNotFoundException e) {
-            System.err.println("ERROR: The config.properties file not found in the project root directory.");
-            System.err.println("You need to create it with 'client_secrets_file=client_secrets.json'.");
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("ERROR: Unable to read config.properties file.");
-            e.printStackTrace();
-            System.exit(1);
+        try (FileInputStream fis = new FileInputStream("config.properties")) {
+            properties.load(fis);
         }
-        return properties;
+        String clientSecretsFile = properties.getProperty("client_secrets_file", CLIENT_SECRETS_FILE);
+
+        // Set up HTTP transport and YouTube client
+        NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        Credential credential = getCredentials(httpTransport, clientSecretsFile);
+        YouTube youtubeService = new YouTube.Builder(httpTransport, JSON_FACTORY, credential)
+                .setApplicationName(APPLICATION_NAME)
+                .build();
+
+        // Export subscriptions
+        exportSubscriptions(youtubeService);
     }
 
-    private static final Properties configProperties = loadConfigProperties();
-    private static final String CLIENT_SECRETS_FILE = configProperties.getProperty("client_secrets_file", "client_secrets.json");
-
-    // Authentication setup
-    private static Credential getCredentials(NetHttpTransport httpTransport) throws IOException {
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new FileReader(CLIENT_SECRETS_FILE));
+    private static Credential getCredentials(NetHttpTransport httpTransport, String clientSecretsFile) throws IOException {
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new FileReader(clientSecretsFile));
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
                 .setAccessType("offline")
@@ -55,46 +54,55 @@ public class ExportYouTubeSubscriptions {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    public static void main(String[] args) throws GeneralSecurityException, IOException {
-        try {
-            // Initialize YouTube API
-            NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-            YouTube youtubeService = new YouTube.Builder(httpTransport, JSON_FACTORY, getCredentials(httpTransport))
-                    .setApplicationName(APPLICATION_NAME)
-                    .build();
-
-            // Retrieve subscriptions
-            List<String> subscriptions = new ArrayList<>();
+    private static void exportSubscriptions(YouTube youtubeService) throws IOException {
+        int totalSubscriptions = 0;
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(SUBSCRIPTIONS_FILE))) {
             String nextPageToken = null;
-
             do {
                 YouTube.Subscriptions.List request = youtubeService.subscriptions()
-                        .list(Arrays.asList("snippet"))
+                        .list(Arrays.asList("snippet")) // Changed to Arrays.asList for correct type
                         .setMine(true)
                         .setMaxResults(50L);
-
                 if (nextPageToken != null) {
                     request.setPageToken(nextPageToken);
                 }
 
                 SubscriptionListResponse response = request.execute();
-                for (Subscription subscription : response.getItems()) {
+                List<Subscription> subscriptions = response.getItems();
+                totalSubscriptions += subscriptions.size();
+
+                for (Subscription subscription : subscriptions) {
                     String channelId = subscription.getSnippet().getResourceId().getChannelId();
-                    subscriptions.add(channelId);
+                    writer.write(channelId);
+                    writer.newLine();
                 }
+
                 nextPageToken = response.getNextPageToken();
-            } while (nextPageToken != null);
-
-            // Save to file
-            try (FileWriter writer = new FileWriter("subscriptions.txt")) {
-                for (String channelId : subscriptions) {
-                    writer.write(channelId + "\n");
+                try {
+                    Thread.sleep(5000); // 5-second delay to avoid rate limits
+                } catch (InterruptedException e) {
+                    System.err.println("Thread interrupted during delay: " + e.getMessage());
+                    Thread.currentThread().interrupt(); // Restore interrupted status
                 }
-            }
+            } while (nextPageToken != null);
+        }
 
-            System.out.println("Exported " + subscriptions.size() + " subscriptions");
-        } catch (Exception e) {
-            System.err.println("Error during export: " + e.getMessage());
+        // Save total subscriptions and export date
+        LocalDate exportDate = LocalDate.now();
+        updateSubscriptionCountFile(exportDate, totalSubscriptions);
+        System.out.println("Exported " + totalSubscriptions + " subscriptions to " + SUBSCRIPTIONS_FILE);
+    }
+
+    private static void updateSubscriptionCountFile(LocalDate exportDate, int totalSubscriptions) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(COUNT_FILE))) {
+            writer.write("# Subscription Migration Progress\n");
+            writer.write("Export Date: " + exportDate + "\n");
+            writer.write("Total Subscriptions in Source Account: " + totalSubscriptions + "\n");
+            writer.write("Last Import Date: " + LocalDate.now() + "\n");
+            writer.write("Total Subscriptions Imported: 0\n");
+            writer.write("Daily Import Count: 0\n");
+        } catch (IOException e) {
+            System.err.println("ERROR: Unable to write to " + COUNT_FILE);
             e.printStackTrace();
         }
     }
