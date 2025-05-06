@@ -93,7 +93,7 @@ This project allows you to migrate YouTube subscriptions from one account to ano
 
 ## Where to Check Limits
 - To monitor your API quotas, go to [Google Cloud Console](https://console.cloud.google.com), navigate to "APIs & Services" → "Quotas", and select "YouTube Data API v3". The "Quotas & System Limits" section will show your current usage (e.g., 10,000 queries per day) and percentage used.
-
+![img.png](img.png)
 ## Additional Resources
 - For more details, visit the [YouTube Subscription Migrator Wiki](https://deepwiki.com/yuriiormson/YouTube-Subscription-Migrator), which provides comprehensive documentation, troubleshooting guides, and additional resources related to this project, maintained by the developer to support users and contributors.
 
