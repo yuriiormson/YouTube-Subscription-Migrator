@@ -75,8 +75,5 @@ This project allows you to migrate YouTube subscriptions from one account to ano
 ## Additional Resources
 - For more details, visit the [YouTube Subscription Migrator Wiki](https://deepwiki.com/yuriiormson/YouTube-Subscription-Migrator), which provides comprehensive documentation, troubleshooting guides, and additional resources related to this project, maintained by the developer to support users and contributors.
 
-## License
-[MIT License](LICENSE)
-
 ## Contributions
 Feel free to fork and submit pull requests!
