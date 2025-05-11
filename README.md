@@ -1,6 +1,10 @@
-# YouTube Subscription Migrator
+# YouTube Channel Subscription Migrator
 
-This project allows you to migrate YouTube subscriptions from one account to another using a Java application with the YouTube Data API. All comments in the code are in English for broader accessibility.
+This tool allows you to migrate your YouTube channel subscriptions from one YouTube account to another using a Java application with the YouTube Data API.
+
+## The Problem
+-  Managing multiple YouTube accounts can be cumbersome, and manually re-subscribing to hundreds of channels when switching to a new primary account is time-consuming. This tool aims to automate that process.
+
 
 ## Overview
 - **ExportYouTubeSubscriptions.java**: Exports subscription IDs from the source YouTube account to a `subscriptions.txt` file.
